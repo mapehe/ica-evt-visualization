@@ -1,4 +1,11 @@
-library(permute)
+library(gtools)
+
+GAMMAS = list()
+GAMMAS$HHH = c(5, 9, 13)^(-1)
+GAMMAS$HHL = c(9, 13, -1)^(-1)
+GAMMAS$LLL = c(-1, -0.5, 0)^(-1) # TODO: Make sure that the extreme value index for Beta distribution is correct.
+
+# TODO: Make sure that everything actually works.
 
 help="
     
@@ -42,24 +49,43 @@ help="
 	
 	str   -	  A filename of the form out_[distribution_type]_[ev_estimator]_[sample_size]_[threshold]_[ica_method]
 
-    OUTPUT: A list L with the following data
+    OUTPUT: A list L with entries L[[ str_G ]] where is iterated over the gamma-values.
 
-	* S$distribution_type
-	* S$ev_estimator
-	* S$sample_size
-	* S$threshold
-	* S$ica_method
 "
-params_from_filename = function(str){
+process_file = function(str){
+
+    tmp       =   strsplit(str, "_")[[1]]
+    gammas    =   get(tmp[2], GAMMAS)
+    tmp       =   read.table(str, sep=";", header=T)
+    tmp       =   tmp[complete.cases(tmp),]
+    raw_data  =   optimize_array(tmp, gammas)
+    dffs      =   t(apply(raw_data, 1, function(x) x-gammas))
 
     out = list()
-    tmp = strsplit(str, "_")[[1]]
-    print(tmp)
-    out$distribution_type =   tmp[2]
-    out$ev_estimator	  =   tmp[3] 
-    out$sample_size	  =   tmp[4]
-    out$threshold	  =   tmp[5]
-    out$ica_method	  =   tmp[6]
+    out[[ paste( sub("data/out_", "", str ), as.character(1/gammas[1]), sep="_") ]] = dffs[,1]
+    out[[ paste( sub("data/out_", "", str ), as.character(1/gammas[2]), sep="_") ]] = dffs[,2]
+    out[[ paste( sub("data/out_", "", str ), as.character(1/gammas[3]), sep="_") ]] = dffs[,3]
+
     return(out)
 
 }
+
+
+help="
+    
+    ARGUMENTS:
+	
+	fnames   -    A list of files to process.
+
+    OUTPUT: As in process_file, but with more values.
+
+"
+
+process_files = function(fnames){
+    out = list()
+    for(f in fnames){
+        out = c(out, process_file(f))
+    }
+    return(out)
+}
+
