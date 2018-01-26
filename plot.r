@@ -10,6 +10,19 @@ help="
     
     ARGUMENTS:
 	
+	x   -	A vector of list names.
+
+    OUTPUT: A vector of list names where the elements are ordered so that [ICA-METHOD] and none are always next to each other.
+"
+plot_order = function(x){
+    y = x[-which(grepl("none",x))]
+    z = x[which(grepl("none",x))]
+}
+
+help="
+    
+    ARGUMENTS:
+	
 	x   -	Vector to be optimized
 	y   -	Optimization criteria
 
@@ -58,7 +71,8 @@ process_file = function(str){
     tmp       =   read.table(str, sep=";", header=T)
     tmp       =   tmp[complete.cases(tmp),]
     raw_data  =   optimize_array(tmp, gammas)
-    dffs      =   t(apply(raw_data, 1, function(x) x-gammas))
+    #dffs      =   t(apply(raw_data, 1, function(x) x-gammas))
+    dffs      =   raw_data # Instead of differences, plot the raw data.
 
     out     = list()
     gammas  = apply(matrix(gammas), 1, function(x) if(x==0){return(x);}else{return(1/x);}); 
@@ -95,17 +109,34 @@ option_list = list(
   make_option("--files", type="character", default=NA,
                 help="Which files to process in form [fname1],[fname2],....,[fnameN]"),
   make_option("--op", type="character", default=NA,
-                help="What to do with the data. Choices: histogram, barplot")
+                help="What to do with the data. Choices: histogram, barplot"),
+  make_option("--pauliina", type="character", default=NA,
+		help="Which sample size and threshold to use with op pauliina in form [sample size]_[threshold]")
 );
 
 opt_parser  =   OptionParser(option_list=option_list);
 OPT         =   parse_args(opt_parser);
 
+if(OPT$op == "pauliina"){
+    fs = list.files("data")
+    print(OPT$pauliina)
+    files = fs[which(grepl(OPT$pauliina, fs))]
+} else{
+    OPT$pauliina_params = 0
+}
+
 if(NA %in% OPT){ 
     stop("Missing arguments. See --help.");
 }
 
-files 	    =   strsplit(OPT$files, split=",")[[1]]
+if(OPT$op != "pauliina"){
+    files   =   strsplit(OPT$files, split=",")[[1]]
+}
+
+if(OPT$op == "boxplot_with_control"){
+    files = c(files, sub("fICA|FOBI","none",files))
+}
+
 data 	    =   process_files(files)
 
 if(OPT$op == "histogram"){
@@ -122,3 +153,11 @@ if(OPT$op == "histogram"){
 
 }
 
+if(OPT$op == "boxplot"){
+    boxplot(data);
+}
+
+
+if(OPT$op == "boxplot_with_control"){
+    boxplot(data);
+}
