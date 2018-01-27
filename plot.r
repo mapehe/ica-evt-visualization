@@ -160,3 +160,27 @@ if(OPT$op == "boxplot"){
 if(OPT$op == "boxplot_with_control"){
     boxplot(data);
 }
+
+if(OPT$op == "pauliina"){
+    evs = c("hill", "moment")
+    icas = c("fICA", "FOBI", "none")
+    dists = c("HHH", "HHL", "LLL")
+    for(d in dists){
+	str0 = "DST_EV_ARG_ICA_GAMMA"
+	str0 = gsub("ARG",OPT$pauliina, str0)
+	str0 = gsub("DST", d, str0)
+	for(g in get(d, GAMMAS)){
+	    if(g!=0){g=1/g}
+	    str = gsub("GAMMA", g, str0)
+	    inds = c(gsub("EV", "hill", str),gsub("EV", "moment",  str))
+	    inds = c(rep(inds[1], 3), rep(inds[2],3))
+	    inds[1] = gsub("ICA", "fICA", inds[1])
+	    inds[2] = gsub("ICA", "FOBI", inds[2])
+	    inds[3] = gsub("ICA", "none", inds[3])
+	    inds[4] = gsub("ICA", "fICA", inds[4])
+	    inds[5] = gsub("ICA", "FOBI", inds[5])
+	    inds[6] = gsub("ICA", "none", inds[6])
+	    boxplot(data[inds])
+	}
+    }
+}
