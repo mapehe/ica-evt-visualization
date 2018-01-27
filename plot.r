@@ -161,6 +161,11 @@ if(OPT$op == "boxplot_with_control"){
     boxplot(data);
 }
 
+# TODO: Color the plots.
+# TODO: Display correct value.
+# TODO: Space between the two estimators.
+# TODO: Scale the pictures correctly.
+
 if(OPT$op == "pauliina"){
     evs = c("hill", "moment")
     icas = c("fICA", "FOBI", "none")
