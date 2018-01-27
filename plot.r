@@ -119,13 +119,12 @@ OPT         =   parse_args(opt_parser);
 
 if(OPT$op == "pauliina"){
     fs = list.files("data")
-    print(OPT$pauliina)
-    files = fs[which(grepl(OPT$pauliina, fs))]
+    files = paste("data", fs[which(grepl(OPT$pauliina, fs))], sep="/")
 } else{
     OPT$pauliina_params = 0
 }
 
-if(NA %in% OPT){ 
+if(NA %in% OPT && OPT$op != "pauliina"){ 
     stop("Missing arguments. See --help.");
 }
 
