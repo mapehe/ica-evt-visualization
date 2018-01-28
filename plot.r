@@ -168,6 +168,7 @@ if(OPT$op == "pauliina"){
     evs = c("hill", "moment")
     icas = c("fICA", "FOBI", "none")
     dists = c("HHH", "HHL", "LLL")
+    i = 1;
     for(d in dists){
 	str0 = "DST_EV_ARG_ICA_GAMMA"
 	str0 = gsub("ARG",OPT$pauliina, str0)
@@ -183,8 +184,15 @@ if(OPT$op == "pauliina"){
 	    inds[4] = gsub("ICA", "fICA", inds[4])
 	    inds[5] = gsub("ICA", "FOBI", inds[5])
 	    inds[6] = gsub("ICA", "none", inds[6])
-	    boxplot(data[inds], col=c("#FFA07A","green","blue"))
-	    if(g!=0){abline(h=1/g, lty=3)}else{abline(h=0, lty=3)}
+	    png(paste("plots/", gsub("\\.|_ICA|EV_", "", str), ".png", sep=""), width=1200, height=566)
+	    boxplot(data[inds], col=c("#E873AD","#54C682","#AACCEC"), at=c(1:3, 6:8), names=c("","hill","","","moment",""))
+	    if(g!=0){abline(h=1/g, lty=3)}else{abline(h=g, lty=3)}
+	    dev.off()
+	    i = i+1
 	}
     }
 }
+
+
+
+
