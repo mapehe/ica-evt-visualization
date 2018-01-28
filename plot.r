@@ -161,8 +161,6 @@ if(OPT$op == "boxplot_with_control"){
     boxplot(data);
 }
 
-# TODO: Color the plots.
-# TODO: Display correct value.
 # TODO: Space between the two estimators.
 # TODO: Scale the pictures correctly.
 
@@ -185,7 +183,8 @@ if(OPT$op == "pauliina"){
 	    inds[4] = gsub("ICA", "fICA", inds[4])
 	    inds[5] = gsub("ICA", "FOBI", inds[5])
 	    inds[6] = gsub("ICA", "none", inds[6])
-	    boxplot(data[inds])
+	    boxplot(data[inds], col=c("#FFA07A","green","blue"))
+	    if(g!=0){abline(h=1/g, lty=3)}else{abline(h=0, lty=3)}
 	}
     }
 }
